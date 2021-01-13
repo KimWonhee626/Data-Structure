@@ -1,10 +1,10 @@
 import java.util.Scanner;
 
-// ë‹¨ì¼ ì—°ê²° ë¦¬ìŠ¤íŠ¸
+// ´ÜÀÏ ¿¬°á ¸®½ºÆ®
 
 
 public class SinglyLinkedList {
-	// Node í´ë˜ìŠ¤
+	// Node Å¬·¡½º
 	class Node{
 		private String data;
 		public Node next;
@@ -17,63 +17,55 @@ public class SinglyLinkedList {
 		}
 	}
 		
-	private Node head; // ë§¨ ì²˜ìŒ ë…¸ë“œ
-	private Node tail; // ë§¨ ë ë…¸ë“œ
-	private int size; // ë¦¬ìŠ¤íŠ¸ì˜ í¬ê¸°
+	private Node head; // ¸Ç Ã³À½ ³ëµå
+	private int size; // ¸®½ºÆ®ÀÇ Å©±â
 	
 	
-	//ì—°ê²°ë¦¬ìŠ¤íŠ¸ì˜ ìƒì„±ì
+	//¿¬°á¸®½ºÆ®ÀÇ »ı¼ºÀÚ
 	SinglyLinkedList(){
-		head = new Node(null);
-		tail = new Node(null);
-		head.next = tail;
 		size = 0;
 	}
 	
 	
-	//íŠ¹ì • ì¸ë±ìŠ¤ì˜ ë…¸ë“œ ë°˜í™˜
+	//Æ¯Á¤ ÀÎµ¦½ºÀÇ ³ëµå ¹İÈ¯
 	public Node getNode(int idx) {
-		if(idx < 0 || idx >= size) {
+		if(idx < 1 || idx > size + 1) {
 			throw new IndexOutOfBoundsException("index :" + idx + " size :" + size);
 		}
 		else {
-			Node n = head.next;
-			for(int i=0; i<idx; i++)
-				n = n.next;
-			return n;
+			Node curNode = head;
+			for(int i=1; i<idx; i++)
+				curNode = curNode.next;
+			return curNode;
 		}
 	}
 	
 		
-	//ë§¨ ì•ì— ë…¸ë“œ ì‚½ì… ë©”ì†Œë“œ
+	//¸Ç ¾Õ¿¡ ³ëµå »ğÀÔ ¸Ş¼Òµå
 	public void addFirst(String data) {
 		Node newNode = new Node(data);
-		newNode.next = head.next;
-		head.next = newNode;
-		size++; // ë¦¬ìŠ¤íŠ¸ í¬ê¸° ì¦ê°€
+		if(head == null) { // ¸®½ºÆ®°¡ ºñ¾îÀÖÀ» ¶§
+			head = newNode;
+		}
+		else {
+		newNode.next = head;
+		head = newNode;
+		
+		}
+		size++; // ¸®½ºÆ® Å©±â Áõ°¡
 		
 	}
 	
 	
-	//ì›í•˜ëŠ” ìœ„ì¹˜ì— ë…¸ë“œ ì‚½ì… ë©”ì†Œë“œ
-	public void add(String data) {
-		if(size == 0) {
-			addFirst(data);
-			return;
-		}
-		Scanner sc = new Scanner(System.in);
-		int idx;
-		
-		System.out.print("ì¸ë±ìŠ¤ë¥¼ ì…ë ¥í•˜ì„¸ìš”.>> ");
-		idx = sc.nextInt();
-		
-		if(idx < 0 || idx >= size) {
+	//¿øÇÏ´Â À§Ä¡¿¡ ³ëµå »ğÀÔ ¸Ş¼Òµå(1ºÎÅÍ ½ÃÀÛ)
+	public void add(int idx, String data) {
+		if(idx < 1 || idx > size + 1) {
 			throw new IndexOutOfBoundsException("index :" + idx + ", size :" + size);
 		}
 		
-		if(idx == 0)
+		if(idx == 1) {
 			addFirst(data);
-		
+		}
 		else {
 		Node newNode = new Node(data);
 		Node prevNode = getNode(idx - 1);
@@ -84,47 +76,51 @@ public class SinglyLinkedList {
 	}
 	
 	
-	//ë§¨ ì• ë…¸ë“œ ì‚­ì œ ë©”ì†Œë“œ
+	//¸Ç ¾Õ ³ëµå »èÁ¦ ¸Ş¼Òµå
 	public String removeFirst() {
-		Node n = head.next;
-		head.next = n.next;
+		Node n = head;
+		head = head.next;
 		size--;
-		
 		return n.data;
 	}
 	
 	
-	//íŠ¹ì • ì¸ë±ìŠ¤ì˜ ë…¸ë“œ ì‚­ì œ ë©”ì†Œë“œ
+	//Æ¯Á¤ ÀÎµ¦½ºÀÇ ³ëµå »èÁ¦ ¸Ş¼Òµå
 	public String remove(int idx) {
-		if(idx < 0 || idx >= size) {
+		if(idx < 1 || idx > size) {
 			throw new IndexOutOfBoundsException("index :" + idx + ", size :" + size);
 		}
-		if(idx == 0)
+		if(idx == 1)
 			return removeFirst();
-		
+		else {
 		Node prevNode = getNode(idx - 1);
 		Node n = prevNode.next;
-		prevNode.next = n.next;
+		if(n.next == null) { // ¸¶Áö¸· ³ëµåÀÏ¶§
+			prevNode.next = null;
+		}
+		else {
+			prevNode.next = n.next;
+		}
 		size--;
-		
 		return n.data;
+		}
 	}
 	
 	
-	//ë¦¬ìŠ¤íŠ¸ì˜ ë°ì´í„° ëª¨ë‘ ì¶œë ¥
+	//¸®½ºÆ®ÀÇ µ¥ÀÌÅÍ ¸ğµÎ Ãâ·Â
 	public void print() {
 		Node p = head;
 		System.out.print("[ ");
 		for(int i=0; i<size; i++) {
-			p = p.next;
 			System.out.print(p.data + " ");
+			p = p.next;
 		}
 		System.out.println("]");
 	}
 	
 	
 	
-	//ë°ì´í„° ì‚½ì…, ì‚­ì œ, íƒìƒ‰ì´ ê°€ëŠ¥í•¨.
+	//µ¥ÀÌÅÍ »ğÀÔ, »èÁ¦, Å½»öÀÌ °¡´ÉÇÔ.
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		
@@ -133,32 +129,34 @@ public class SinglyLinkedList {
 		String data;
 		int idx, count;
 		
-		System.out.print("íšŸìˆ˜ë¥¼ ì…ë ¥í•˜ì„¸ìš”.>> ");
+		System.out.print("¿¬»ê È½¼ö¸¦ ÀÔ·ÂÇÏ¼¼¿ä.>> ");
 		count = sc.nextInt();
-		
 		
 		for(int i=0; i<count; i++) {
 			int menu;
-			System.out.println("ë©”ë‰´ë¥¼ ì„ íƒí•˜ì„¸ìš”. ");
-			System.out.println("1.ì‚½ì…, 2.ì‚­ì œ, 3.ì¶œë ¥");
+			System.out.println("¸Ş´º¸¦ ¼±ÅÃÇÏ¼¼¿ä. ");
+			System.out.println("1.»ğÀÔ, 2.»èÁ¦, 3.Ãâ·Â");
 			menu = sc.nextInt();
 			
 			if(menu == 1) {
-			System.out.print("ë°ì´í„°ë¥¼ ì…ë ¥í•˜ì„¸ì˜¤.>> ");
+			System.out.print("µ¥ÀÌÅÍ¸¦ ÀÔ·ÂÇÏ¼¼¿À.>> ");
 			data = sc.next();
-			SList.add(data);
-			System.out.println("ë¦¬ìŠ¤íŠ¸ í¬ê¸° : " + SList.size);
+			System.out.print("ÀÎµ¦½º¸¦ ÀÔ·ÂÇÏ¼¼¿À.>> ");
+			idx = sc.nextInt();
+			SList.add(idx, data);
+			System.out.println("¸®½ºÆ® Å©±â : " + SList.size);
 			}
 			
 			if(menu == 2) {
-				System.out.print("ì¸ë±ìŠ¤ë¥¼ ì…ë ¥í•˜ì„¸ìš”.>> ");
+				System.out.print("ÀÎµ¦½º¸¦ ÀÔ·ÂÇÏ¼¼¿ä.>> ");
 				idx = sc.nextInt();
-				System.out.println("ì‚­ì œëœ ë°ì´í„° : " + SList.remove(idx));
+				System.out.println("»èÁ¦µÈ µ¥ÀÌÅÍ : " + SList.remove(idx));
 			}
 			
 			if(menu == 3) {
 				SList.print();
 			}
 		}
+		sc.close();
 	}
 }
