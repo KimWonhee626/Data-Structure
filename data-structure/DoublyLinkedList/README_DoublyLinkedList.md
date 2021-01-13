@@ -151,7 +151,7 @@
 </br>
 
 ### 4. 출력
--4.1 void print() : 리스트의 원소들 출력
+- 4.1 void print() : 리스트의 원소들 출력
 ```java
 	public void print() {
 		Node p = head;
