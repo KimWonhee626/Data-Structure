@@ -155,7 +155,7 @@ public class ArrayQueue {
 ## 2. ListQueue : 리스트를 이용한 큐
 </br>
 
-## 2.1. ListQueue 구현
+### 2.1. ListQueue 구현
 
 ```java
 class Node{
