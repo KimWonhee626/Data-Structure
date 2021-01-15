@@ -3,7 +3,6 @@ import java.util.Scanner;
 
 // 리스트를 이용한 스택
 
-
 class Node{
 	public Object data;
 	public Node next;
@@ -44,7 +43,8 @@ public class ListStack {
 	// top 노드 반환
 	public Node peek() {
 		if(isEmpty()) {
-			throw new ArrayIndexOutOfBoundsException("Stack is Empty !!");
+			System.out.println("Stack is Empty !!");
+			return null;
 		}
 		return top;
 	}
@@ -52,6 +52,9 @@ public class ListStack {
 	
 	// 데이터 삭제 후 반환
 	public Node pop() {
+		if(isEmpty()) {
+			throw new ArrayIndexOutOfBoundsException("Stack is Empty !!");
+		}
 		Node remove = peek();
 		top = top.next;
 		return remove;
@@ -61,7 +64,8 @@ public class ListStack {
 	// 모든 데이터 출력
 	public void print() {
 		if(isEmpty()) {
-			throw new ArrayIndexOutOfBoundsException("Stack is Empty !!");
+			System.out.println("Stack is Empty !!");
+			return;
 		}
 		Node n = top;
 		while(n.next != null) {
@@ -98,7 +102,11 @@ public class ListStack {
 				System.out.println("삭제된 데이터 : " + stack.pop().data.toString());
 			}
 			if(menu == 3) {
-				System.out.println("가장 위 데이터 :" + stack.peek().data.toString());
+				Node peek = stack.peek();
+				if(peek == null)
+					continue;
+				else
+					System.out.println("가장 위 데이터 :" + peek.data.toString());
 			}
 			if(menu == 4) {
 				stack.print();
