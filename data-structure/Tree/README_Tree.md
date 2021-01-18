@@ -2,12 +2,12 @@
 ---
 </br>
 
-![트리](https://user-images.githubusercontent.com/69297345/104885149-e4086580-59aa-11eb-8b74-b2fbbab354c0.png)
-
-
-</br>
 트리는 비선형 자료구조이며 노드로 구성되어 있습니다.  
 노드들은 링크를 통해 연결되어 있고, *계층적인* 자료구조 입니다.
+</br>
+
+![트리](https://user-images.githubusercontent.com/69297345/104885149-e4086580-59aa-11eb-8b74-b2fbbab354c0.png)
+
 </br>
 </br>
 
