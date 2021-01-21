@@ -10,7 +10,7 @@
 
 효율적인 탐색 작업을 위해서 BST는 다음과 같은 특징을 가집니다.  
 
-  1. 모든 원소는 서로 다른 유일한 키를 갖는다.  
+  1. 모든 원소는 서로 다른 **유일한 키**를 갖는다.  
   2. 왼쪽 서브 트리에 있는 원소의 키는 그 루트의 키보다 작다.  
   3. 오른쪽 서브 트리에 있는 원소의 키는 그 루트의 키보다 크다.  
   4. 왼쪽 서브 트리와 오른쪽 서브 트리도 이진탐색 트리다.  
@@ -48,6 +48,9 @@
 
 ## 2. BST의 삽입 연산
 BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을 수행하여 삽입하려는 원소와 키값이 같은 원소가 존재하는지 확인해야 합니다.  
+</br>
+
+삽입하려는 키값이 현재 노드의 키값보다 작은 경우 왼쪽자식으로, 클 경우 오른쪽 자식으로 이동하여 null을 만나면 그자리에 새로운 노드를 삽입합니다.
 </br>
 </br>
 
@@ -92,6 +95,160 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 </br>
 </br>
 
-## 3. BST의 삭제 연산
+## 3. BST의 삭제 연산  
+삭제 연산은 노드를 삭제한 후 나머지 노드들을 어떻게 연결할 것인지 생각해야 하기때문에 조금 복잡합니다.  
+</br>
+
+따라서 아래의 3가지 경우로 나누어 보겠습니다.
+1. 자식 노드가 없는경우
+2. 자식 노드가 하나만 있는 경우
+3. 자식 노드가 둘 다 있는 경우
 
 
+### 3.1 삭제 구현 코드
+
+```java
+	public boolean remove(int key) {
+		
+		TreeNode cur = root; // 삭제할 노드
+		TreeNode parent = null; // 삭제할 노드의 부모노드
+		boolean isLeftChild = false;
+		
+		// while문 끝나면 cur에 삭제할 노드 저장되어있음.
+		while(cur.getKey() != key) {
+			parent = cur;
+			
+			if(cur.getKey() > key) {
+				isLeftChild = true;
+				cur = cur.getLeft();
+			}
+			
+			if(cur.getKey() < key) {
+				isLeftChild = false;
+				cur = cur.getRight();
+			}
+			if(cur == null) // 삭제할 노드가 null 이면 false 반환
+				return false;
+		}
+		
+		 // 삭제할 노드가 자식이 없을때
+		if(isInternal(cur) == false) {
+			if(cur == root) {
+				root = null;
+			}
+			if(isLeftChild) {
+				parent.setLeft(null);
+			}
+			else {
+				parent.setRight(null);
+			}
+		}
+		 // 삭제할 노드가 오른쪽자식만 있을때 
+		else if(cur.getLeft() == null) {
+			if(cur == root) {
+				root = cur.getRight();
+			}
+			else if(isLeftChild) { // 삭제할 노드가 parent의 왼쪽자식일때
+				parent.setLeft(cur.getRight());
+			}
+			else { // 삭제할 노드가 parent의 오른쪽자식일때
+				parent.setRight(cur.getRight());
+			}
+		}
+		 // 삭제할 노드가 왼쪽자식만 있을때 
+		else if(cur.getRight() == null) {
+			if(cur == root) {
+				root = cur.getLeft();
+			}
+			else if(isLeftChild) {
+				parent.setLeft(cur.getLeft());
+			}
+			else {
+				parent.setRight(cur.getLeft());
+			}
+		}
+		// 삭제할 노드가 자식이 모두 있는경우
+		// 삭제할 노드는 오른쪽 서브트리의 가작 작은 키값을 가진 노드로 바꾼다. -> 자식노드 없음.
+		else {
+			TreeNode minNode = getMinNode(cur);
+			if(cur == root) {
+				root = minNode;
+			}
+			else if(isLeftChild) {
+				parent.setLeft(minNode);
+			}
+			else {
+				parent.setRight(minNode);
+			}
+			minNode.setLeft(cur.getLeft());
+			minNode.setRight(cur.getRight());
+		}
+		
+		return true;
+	}
+```
+</br>
+</br>
+</br>
+
+### 4. 이외의 메소드들
+
+```java
+    // 내부노드(적어도 한개의 자식이 있는노드)인지 여부 반환
+	public boolean isInternal(TreeNode v) {
+		return (v.getLeft() != null || v.getRight() != null);
+	}
+	
+	
+	// 삭제하려는 노드의 오른쪽 서브트리의 최소값 반환하는 메소드
+	public TreeNode getMinNode(TreeNode removeNode) {
+		TreeNode parent = removeNode;
+		TreeNode min = removeNode.getRight();
+		
+		while(min.getLeft() != null) {	
+			parent = min;
+			min = min.getLeft();
+		}
+		if(parent != removeNode)
+			parent.setLeft(null);
+		
+		return min;
+	}
+
+	
+	// 전위순회
+	public void preOrder(TreeNode v) {
+		if(v != null){ 
+			System.out.println(v.getKey());
+			if(v.getLeft() != null)
+				preOrder(v.getLeft());
+			if(v.getRight() != null) {
+				preOrder(v.getRight());
+				
+			}
+		}
+	}
+	
+	// 중위순회
+	public void inOrder(TreeNode v) {
+		if(v != null){ 
+			if(v.getLeft() != null)
+				inOrder(v.getLeft());
+			System.out.println(v.getKey());
+			if(v.getRight() != null)
+				inOrder(v.getRight());
+		}
+	}
+	
+	// 후위순회
+	public void postOrder(TreeNode v) {
+		if(v != null){ 
+			if(v.getLeft() != null)
+				postOrder(v.getLeft());
+			if(v.getRight() != null)
+				postOrder(v.getRight());
+			System.out.println(v.getKey());
+		}
+	}
+
+```
