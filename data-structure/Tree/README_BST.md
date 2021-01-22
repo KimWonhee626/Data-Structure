@@ -28,18 +28,19 @@
 ```java
 	public TreeNode find(int key) {
 		TreeNode cur = root;
+		
 		while(cur != null) {
 			if(cur.getKey() == key) {
-				return cur;
+				return cur; // 키 값이 같으면 현재 노드 반환
 			}
-			else if(cur.getKey() < key) {
+			else if(cur.getKey() > key) {
 				cur = cur.getLeft();
 			}
 			else {
 				cur = cur.getRight();
 			}
 		}
-		return cur; // 같은 key깂이 없을때 null 리턴됨
+		return null; // 같은 key깂이 없을때 null 리턴
 	}
 ```
 </br>
@@ -57,8 +58,8 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 ### 2.1 삽입 구현 코드
 ```java
 	public void insert(int key) {
-		if(find(key) != null) {
-			System.out.println("The Key Already Exists !!!");
+		if(find(key) != null) { // 이미 존재하는 key이면 종료
+			System.out.println("The Key(" + key + ") Already Exists !!!");
 			return;
 		}
 		
@@ -66,27 +67,29 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 		
 		if(root == null) { // 트리가 비어있을때 root에 추가
 			root = newNode;
-			return;
 		}
-		
-		TreeNode n = root; // 탐색용 포인터 노드
-		TreeNode parent; // n의 부모노드
-		while(true) {
-			parent = n;
-			
-			if(key < n.getKey()) { // 삽입하려는 키값이 현재 노드의 키값보다 작으면
-				n = n.getLeft(); // 왼쪽자식으로 이동
+		else {
+			TreeNode cur = root; // 탐색용 포인터 노드
+			TreeNode parent = null; // cur의 부모노드
+			while(true) {
+				parent = cur;
 				
-				if(n == null) { // 왼쪽자식이 null 이면
-					parent.setLeft(newNode); // 부모노드의 왼쪽자식에 newNode 삽입
-					return;
+				if(key < cur.getKey()) { // 삽입하려는 키값이 현재 노드의 키값보다 작으면
+					cur = cur.getLeft(); // 왼쪽자식으로 이동
+					
+					if(cur == null) { // 왼쪽자식이 null 이면
+						parent.setLeft(newNode); // 왼쪽자식에 newNode 삽입
+						return;
+					}
 				}
-			}
-			else {// 삽입하려는 키값이 현재 노드의 키값보다 크면
-				n = n.getRight(); // 오른쪽 자식에 같은방법으로 삽입
-				
-				if(n == null);
-				parent.setRight(newNode);
+				else {// 삽입하려는 키값이 현재 노드의 키값보다 크면
+					cur = cur.getRight(); // 오른쪽 자식에 같은방법으로 삽입
+					
+					if(cur == null){
+						parent.setRight(newNode);
+						return;
+					}
+				}
 			}
 		}
 	}
@@ -109,6 +112,10 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 
 ```java
 	public boolean remove(int key) {
+		if(find(key) == null) {
+			System.out.println("The key value("+key+") doesn't exist !!!");
+			return false;
+		}
 		
 		TreeNode cur = root; // 삭제할 노드
 		TreeNode parent = null; // 삭제할 노드의 부모노드
@@ -122,14 +129,13 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 				isLeftChild = true;
 				cur = cur.getLeft();
 			}
-			
-			if(cur.getKey() < key) {
+			else {
 				isLeftChild = false;
 				cur = cur.getRight();
 			}
-			if(cur == null) // 삭제할 노드가 null 이면 false 반환
-				return false;
+			
 		}
+		
 		
 		 // 삭제할 노드가 자식이 없을때
 		if(isInternal(cur) == false) {
@@ -168,7 +174,7 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 			}
 		}
 		// 삭제할 노드가 자식이 모두 있는경우
-		// 삭제할 노드는 오른쪽 서브트리의 가작 작은 키값을 가진 노드로 바꾼다. -> 자식노드 없음.
+		// 삭제할 노드는 오른쪽 서브트리의 가작 작은 키값을 가진 노드로 바꾼다. 
 		else {
 			TreeNode minNode = getMinNode(cur);
 			if(cur == root) {
@@ -181,20 +187,13 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 				parent.setRight(minNode);
 			}
 			minNode.setLeft(cur.getLeft());
-			minNode.setRight(cur.getRight());
 		}
 		
 		return true;
 	}
-```
-</br>
-</br>
-</br>
-
-### 4. 이외의 메소드들
-
-```java
-    // 내부노드(적어도 한개의 자식이 있는노드)인지 여부 반환
+	
+	
+	// 내부노드(적어도 한개의 자식이 있는노드)인지 여부 반환
 	public boolean isInternal(TreeNode v) {
 		return (v.getLeft() != null || v.getRight() != null);
 	}
@@ -202,20 +201,30 @@ BST의 모든 원소는 유일한 키값을 가져야 하므로 탐색 연산을
 	
 	// 삭제하려는 노드의 오른쪽 서브트리의 최소값 반환하는 메소드
 	public TreeNode getMinNode(TreeNode removeNode) {
-		TreeNode parent = removeNode;
+		TreeNode minParent = removeNode;
 		TreeNode min = removeNode.getRight();
+
 		
-		while(min.getLeft() != null) {	
-			parent = min;
+		while(min.getLeft() != null) { 
+			minParent = min;
 			min = min.getLeft();
 		}
-		if(parent != removeNode)
-			parent.setLeft(null);
+		if(min != removeNode.getRight()) {
+			minParent.setLeft(min.getRight());
+			min.setRight(removeNode.getRight());
+		}
 		
 		return min;
 	}
 
-	
+```
+</br>
+</br>
+</br>
+
+### 4. 순회 코드
+
+```java
 	// 전위순회
 	public void preOrder(TreeNode v) {
 		if(v != null){ 
