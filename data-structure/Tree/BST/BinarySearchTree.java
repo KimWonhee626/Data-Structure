@@ -77,6 +77,10 @@ public class BinarySearchTree {
 	
 	// 삭제 연산 메소드
 	public boolean remove(int key) {
+		if(find(key) == null) {
+			System.out.println("The key value("+key+") doesn't exist !!!");
+			return false;
+		}
 		
 		TreeNode cur = root; // 삭제할 노드
 		TreeNode parent = null; // 삭제할 노드의 부모노드
@@ -90,14 +94,13 @@ public class BinarySearchTree {
 				isLeftChild = true;
 				cur = cur.getLeft();
 			}
-			
-			if(cur.getKey() < key) {
+			else {
 				isLeftChild = false;
 				cur = cur.getRight();
 			}
-			if(cur == null) // 삭제할 노드가 null 이면 false 반환
-				return false;
+			
 		}
+		
 		
 		 // 삭제할 노드가 자식이 없을때
 		if(isInternal(cur) == false) {
@@ -136,7 +139,7 @@ public class BinarySearchTree {
 			}
 		}
 		// 삭제할 노드가 자식이 모두 있는경우
-		// 삭제할 노드는 오른쪽 서브트리의 가작 작은 키값을 가진 노드로 바꾼다. -> 자식노드 없음.
+		// 삭제할 노드는 오른쪽 서브트리의 가작 작은 키값을 가진 노드로 바꾼다. 
 		else {
 			TreeNode minNode = getMinNode(cur);
 			if(cur == root) {
@@ -149,7 +152,6 @@ public class BinarySearchTree {
 				parent.setRight(minNode);
 			}
 			minNode.setLeft(cur.getLeft());
-			minNode.setRight(cur.getRight());
 		}
 		
 		return true;
@@ -164,15 +166,18 @@ public class BinarySearchTree {
 	
 	// 삭제하려는 노드의 오른쪽 서브트리의 최소값 반환하는 메소드
 	public TreeNode getMinNode(TreeNode removeNode) {
-		TreeNode parent = removeNode;
+		TreeNode minParent = removeNode;
 		TreeNode min = removeNode.getRight();
+
 		
-		while(min.getLeft() != null) {	
-			parent = min;
+		while(min.getLeft() != null) { 
+			minParent = min;
 			min = min.getLeft();
 		}
-		if(parent != removeNode)
-			parent.setLeft(null);
+		if(min != removeNode.getRight()) {
+			minParent.setLeft(min.getRight());
+			min.setRight(removeNode.getRight());
+		}
 		
 		return min;
 	}
@@ -181,7 +186,7 @@ public class BinarySearchTree {
 	// 전위순회
 	public void preOrder(TreeNode v) {
 		if(v != null){ 
-			System.out.println(v.getKey());
+			System.out.print(v.getKey() + " ");
 			if(v.getLeft() != null)
 				preOrder(v.getLeft());
 			if(v.getRight() != null) {
@@ -196,7 +201,7 @@ public class BinarySearchTree {
 		if(v != null){ 
 			if(v.getLeft() != null)
 				inOrder(v.getLeft());
-			System.out.println(v.getKey());
+			System.out.print(v.getKey() + " ");
 			if(v.getRight() != null)
 				inOrder(v.getRight());
 		}
@@ -209,7 +214,7 @@ public class BinarySearchTree {
 				postOrder(v.getLeft());
 			if(v.getRight() != null)
 				postOrder(v.getRight());
-			System.out.println(v.getKey());
+			System.out.print(v.getKey() + " ");
 		}
 	}
 
